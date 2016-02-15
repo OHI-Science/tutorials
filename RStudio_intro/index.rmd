@@ -28,6 +28,7 @@ Links::
 
 - `dplyr` [RStudio blog](http://blog.rstudio.org/2014/01/17/introducing-dplyr/)
 - `tidyr` [J Byrnes blog](http://www.imachordata.com/you-complete-me/)
+- `ggplot2` this is `r 10*10`% awesome!
 - `knitr`, `rmarkdown` 
 - `readr`, `stringr`, `lubridate`
 - so many more...
