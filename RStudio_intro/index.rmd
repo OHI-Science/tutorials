@@ -1,0 +1,51 @@
+---
+title: "3 main catetories of RStudio Awesomeness"
+output: html_document
+---
+
+For a dedicated R user who hasn't had the exposure to the awesomeness of RStudio.
+
+# 1. The RStudio IDE
+
+- console: tab completion of functions, filenames, variables
+- window docking for source files (and now, multiple source windows)
+- text editor/markdown previews
+- panes/tabs: filepaths, plots, packages, help, viewer
+- environment tab: visable workspace
+- .rproj: load working directory
+
+Also::
+
+- Git tab: direct connection to GitHub (can do most-used functions without the command line or the GitHub Desktop App)
+- RMarkdown: make reports with executable R code, eg: [.rmd](https://github.com/jafflerbach/spatial-analysis-R/blob/master/intro_spatial_data_R.Rmd), [rendered .html](https://cdn.rawgit.com/eco-data-science/spatial-analysis-R/master/intro_spatial_data_R.html), [rendered .pdf](https://github.com/jafflerbach/spatial-analysis-R/blob/master/intro_spatial_data_R.pdf). Also, [presentations](http://ohi-science.org/tutorials/tbx_intro/#1) 
+
+
+Links::
+
+- [RStudio v0.99.878 Release Blog](http://blog.rstudio.org/2016/02/09/new-release-of-rstudio-v0-99-878/)
+
+# 2. Packages. 
+
+- `dplyr` [RStudio blog](http://blog.rstudio.org/2014/01/17/introducing-dplyr/)
+- `tidyr` [J Byrnes blog](http://www.imachordata.com/you-complete-me/)
+- `knitr`, `rmarkdown` 
+- `readr`, `stringr`, `lubridate`
+- so many more...
+
+Also::
+
+- `shiny`! [gallery](http://shiny.rstudio.com/gallery/)
+
+Links: 
+
+- [Hadley's website](http://hadley.nz/)
+
+
+# 3. Support!
+
+- it's a community of people, available on email, github issues, twitter, etc. 
+- [webinars](https://www.rstudio.com/resources/webinars/)
+- [cheatsheets](https://www.rstudio.com/resources/cheatsheets/)
+
+Other tutorials/courses
+- [Stats 545](https://stat545-ubc.github.io/)
