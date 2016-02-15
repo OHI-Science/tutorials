@@ -26,7 +26,7 @@ Links::
 
 # 2. Packages. 
 
-- `dplyr` [RStudio blog](http://blog.rstudio.org/2014/01/17/introducing-dplyr/)
+- `dplyr` [RStudio blog](http://blog.rstudio.org/2014/01/17/introducing-dplyr/), [idiom blog](http://www.statsblogs.com/2014/02/10/how-dplyr-replaced-my-most-common-r-idioms/)
 - `tidyr` [J Byrnes blog](http://www.imachordata.com/you-complete-me/)
 - `ggplot2` this is `r 10*10`% awesome!
 - `knitr`, `rmarkdown` 
