@@ -7,15 +7,15 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval = FALSE)
-
+  
 ```
 
 
 Once you have prepared your data layer in the prep folder, you are ready to modify goal models and calculate scores using those layers in `functions.r`. 
 
-> `functions.r` is pre-loaded with r codes from the most recent OHI-Global assessment as a reference. You can run through the reference script line-by-line to learn how it has been done. 
+> `functions.r` is pre-loaded with r code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done. 
 
-In this section, we won't be modifying goal models yet. Instead, to get you familiar with the construct of functions.R and the seqquence of events that are involved in modifying goal models, we'll simply plug in the data layer that you just prepped, saved, and registered (link to previous data prep section), follow these steps to calcalute scores: 
+In this section, we won't be modifying goal models yet. Instead, to get you familiar with the construct of functions.R and the sequence of events that are involved in modifying goal models, we'll plug in the data layer that you just prepped, saved, and registered (link to previous data prep section), follow these steps to calculate scores: 
 
 1. Save and register data layers
 
@@ -36,7 +36,7 @@ Now let's get started and give it a try!
 
 ## Step 1: Save and register data layers
 
-_There is a whole section in the manual (http://ohi-science.org/manual/#modifying-goal-models), shoudl we link to it directly?_
+_There is a whole section in the manual (http://ohi-science.org/manual/#modifying-goal-models), should we link to it directly?_
 
 ### 1.1 Save data layers in the *layers* folder
 
@@ -178,7 +178,7 @@ In the `preindex_fuction`, you could specify variables such as _status_year_ and
 
 ## Step 5. Calculate overall scores
 
-Hooray you've modified a goal function! Now let's calcalate the remaining score components (pressures, resilience, likely future state, and overall score). This is done in `calculate_scores.r`
+Hooray you've modified a goal function! Now let's calculate the remaining score components (pressures, resilience, likely future state, and overall score). This is done in `calculate_scores.r`
 
 _We'll learn how to modify Pressures and Resilience matrix in a different chapter._ 
 
