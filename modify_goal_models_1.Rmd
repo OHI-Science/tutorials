@@ -30,49 +30,50 @@ In this section, we won't be modifying goal models yet. Instead, to get you fami
   - calculate trend scores (`functions.r`)
   - combine status and trend scores (`functions.r`)
 
-1. check and possibly update how the function is called _in `conf/goals.csv`_
+4. check and possibly update how the function is called _in `conf/goals.csv`_
 
-1. calculate the remaining component of OHI scores _in `calculate_scores.r`_
+5. calculate the remaining component of OHI scores _in `calculate_scores.r`_
 
 Now let's get started and give it a try! 
 
-TODO: screenshot of file structure, or Ning's google drawing of all the files
+TODO: screenshot of file structure, or Ning's google drawing of all the files. Like this one? We can highlight what files are needed in this tutorial, and relative position in the conduct process.
+
+![all files](https://docs.google.com/drawings/d/1zHe1Gp2L7xN04w3NO_uQvOrl47Ug_oogyj2E338J90U/pub?w=960&h=600)
 
 ## Step 1: Save and register data layers
 
-_There is a whole section in the manual (http://ohi-science.org/manual/#modifying-goal-models), should we link to it directly?_
-TODO: I think the less we link to the manual the better, let's talk about that more though. 
-
 ### 1.1 Save data layers in the *layers* folder
 
-When you modify existing or create new data layers, we recommend saving this as a new *.csv* file with a suffix identifying your assessment (eg. `_regionYEAR.csv`). Modifying the layer name provides an easy way to track which data layers have been updated regionally, and which rely on global data. Then, the original layers (`_glYEAR.csv` and `_scYEAR.csv`) can be deleted.  
+When you modify existing or create new data layers, we recommend saving this as a new *.csv* file with a suffix identifying your assessment (eg. `_sc2016.csv`). Modifying the layer name provides an easy way to track which data layers have been updated regionally, and which rely on global data. Then, the original layers (`_gl2016.csv` and `_gl2016placeholder.csv`) can be deleted.  
 
 > Tip: filenames should not have any spaces: use an underscore ('_') instead. This will reduce problems when R reads the files.
 
 ### 1.2 Register data layers in `layers.csv`  
 
-When there are new filenames associated with each layer, they will need to be registered in `regionYEAR/layers.csv`. If a layer simply has a new filename, only the *filename* column needs to be updated:
+When there are new filenames associated with each layer, they will need to be registered in `assessmentYEAR/layers.csv`. If a layer simply has a new filename, only the *filename* column needs to be updated:
 
-*TODO: let's take new screenshots from the toolbox-demo repo; the filenames aren't so ugly anymore...*
-![Register new layers in `layers.csv`. Be sure to note if there is a change in the filename.](https://docs.google.com/drawings/d/1adaERJXxzBxCxqBtmvp8uf5g68mHFfakR-Edbh2wwWo/pub?w=1677&h=687)  
+*TODO: let's take new screenshots from the toolbox-demo repo; the filenames aren't so ugly anymore...* (DONE)
+![Register new layers in `layers.csv`. Be sure to note if there is a change in the filename.](https://docs.google.com/drawings/d/1juueRiA0gevOoHH_8owzLNanyQ-H1mAOEl7L_l5YSJ0/pub?w=960&h=720)  
 
-*TODO: I think this stuff should go in the Previous Chapter on Toolbox Architecture, and then we'll link to it from here but focus on changing the columns rather than what they are...*
-However, **if a new layer has been added (for example when a new goal model is developed)**, you will open `layers.csv` in a spreadsheet software (i.e. Microsoft Excel), add a new row in the registry for the new data layer and fill in the first eight columns (columns A-H):
+<!-- *TODO: I think this stuff should go in the Previous Chapter on Toolbox Architecture, and then we'll link to it from here but focus on changing the columns rather than what they are...* -->
+<!-- However, **if a new layer has been added (for example when a new goal model is developed)**, you will open `layers.csv` in a spreadsheet software (i.e. Microsoft Excel), add a new row in the registry for the new data layer and fill in the first eight columns (columns A-H): -->
 
- + **targets:** Add the goal/dimension that the new data layer relates to. Goals are indicated with two-letter codes and sub-goals are indicated with three-letter codes, with pressures, resilience, and spatial layers indicated separately.
- + **layer:** Add an identifying name for the new data layer, which will be referenced in R scripts like `functions.R` and *.csv* files like `pressures_matrix.csv` and `resilience_matrix.csv`.
- + **name:** Add a longer title for the data layer.
- + **description:** Add a longer description of the new data layer.
- + **fld_value:** Add the appropriate units for the new data layer. It is _the same as the column name in the data file_, which will be referenced in R scripts in subsequent calculations. (example: area_km2)
- + **units:** Add a description about the *units* chosen in the *fld_value* column above. Think about what units you would like to be displayed online when filling out "units." (example: km^2)
- + **filename:** Add a filename for the new data layer that matches the name of the *.csv* file that was created previously in the `layers` folder.
- + **fld_id_num:** Area designation that applies to the newly created data layer, such as: *rgn_id* and *fao_id*.
+<!--  + **targets:** Add the goal/dimension that the new data layer relates to. Goals are indicated with two-letter codes and sub-goals are indicated with three-letter codes, with pressures, resilience, and spatial layers indicated separately. -->
+<!--  + **layer:** Add an identifying name for the new data layer, which will be referenced in R scripts like `functions.R` and *.csv* files like `pressures_matrix.csv` and `resilience_matrix.csv`. -->
+<!--  + **name:** Add a longer title for the data layer. -->
+<!--  + **description:** Add a longer description of the new data layer. -->
+<!--  + **fld_value:** Add the appropriate units for the new data layer. It is _the same as the column name in the data file_, which will be referenced in R scripts in subsequent calculations. (example: area_km2) -->
+<!--  + **units:** Add a description about the *units* chosen in the *fld_value* column above. Think about what units you would like to be displayed online when filling out "units." (example: km^2) -->
+<!--  + **filename:** Add a filename for the new data layer that matches the name of the *.csv* file that was created previously in the `layers` folder. -->
+<!--  + **fld_id_num:** Area designation that applies to the newly created data layer, such as: *rgn_id* and *fao_id*. -->
 
-It is important to check that you have filled you the fields correctly, for instance, if "fld_value" does not match the header of the source data layer, you will see an error message when you try to calculate scores. Other columns are generated later by the Toolbox as it confirms data formatting and content.
+<!-- It is important to check that you have filled you the fields correctly, for instance, if "fld_value" does not match the header of the source data layer, you will see an error message when you try to calculate scores. Other columns are generated later by the Toolbox as it confirms data formatting and content. -->
 
 ## Step 2: source `configure_toolbox.r`
 
-TODO: screenshot here?
+TODO: screenshot here? Ning: here it is! but if people are following along with the demo repo, they should be looking at configure_toolbox.r now, right?
+
+![configure_toolbox.r](https://docs.google.com/drawings/d/1BW6CEaCUoVCZQz7z9akP0P4rRMDLvvxgMq7cdYlyxCA/pub?w=960&h=720)
 
 This step syncs different components of the Toolbox (eg. data layers, goal functions, etc) and makes sure that you data are ready to be called when you want to modify goal models and calculate scores. More specifically, sourcing `configure_toolbox.r` will: 
 
@@ -86,6 +87,7 @@ This step syncs different components of the Toolbox (eg. data layers, goal funct
 ## Step 3: Update goal model
 Open `functions.r`, go to the appropriate goal function. We will use Artisanal Fishing Opportunity (AO) as an example. 
 
+![functions.R](https://docs.google.com/drawings/d/1Z2AVtVfIZEd_5GDcmaLb8mRpErKTDzmcbg0SBMxKsxs/pub?w=960&h=720)
 > Tip. (link to a google drawing image) Clicking the bottom left corner of Console will show you a drop-down menu of all functions. It's a shortcut to jump to the appropriate section or goal model. 
 
 ### 3.1 Load data
