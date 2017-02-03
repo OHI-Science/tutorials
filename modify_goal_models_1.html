@@ -11,7 +11,7 @@
 
 
 
-<title>calculate scores using prepped data layers</title>
+<title>calculate scores using prepared data layers</title>
 
 <script src="modify_goal_models_1_files/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -115,16 +115,17 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">calculate scores using prepped data layers</h1>
+<h1 class="title toc-ignore">calculate scores using prepared data layers</h1>
 
 </div>
 
 
+<p><em>TODO JSL: some kind of overview like:</em> This chapter will take you from prepared data to calculated scores. It requires book keeping, <code>R</code> functions, and ultimately, the <code>R</code> package <code>ohicore</code>…</p>
 <p>Once you have prepared your data layer in the prep folder, you are ready to modify goal models and calculate scores using those layers in <code>functions.r</code>.</p>
 <blockquote>
-<p><code>functions.r</code> is pre-loaded with r codes from the most recent OHI-Global assessment as a reference. You can run through the reference script line-by-line to learn how it has been done.</p>
+<p><code>functions.r</code> is pre-loaded with <code>R</code> code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done.</p>
 </blockquote>
-<p>In this section, we won’t be modifying goal models yet. Instead, to get you familiar with the construct of functions.R and the seqquence of events that are involved in modifying goal models, we’ll simply plug in the data layer that you just prepped, saved, and registered (link to previous data prep section), follow these steps to calcalute scores:</p>
+<p>In this section, we won’t be modifying goal models yet. Instead, to get you familiar with the construct of functions.R and the sequence of events that are involved in modifying goal models, we’ll plug in the data layer that you just prepped, saved, and registered (link to previous data prep section), follow these steps to calculate scores:</p>
 <ol style="list-style-type: decimal">
 <li><p>Save and register data layers</p></li>
 <li><p>load ohicore and check data layers <em>in <code>configure_toolbox.r</code></em></p></li>
@@ -141,9 +142,10 @@ $(document).ready(function () {
 <li><p>calculate the remaining component of OHI scores <em>in <code>calculate_scores.r</code></em></p></li>
 </ol>
 <p>Now let’s get started and give it a try!</p>
+<p>TODO: screenshot of file structure, or Ning’s google drawing of all the files</p>
 <div id="step-1-save-and-register-data-layers" class="section level2">
 <h2>Step 1: Save and register data layers</h2>
-<p><em>There is a whole section in the manual (<a href="http://ohi-science.org/manual/#modifying-goal-models" class="uri">http://ohi-science.org/manual/#modifying-goal-models</a>), shoudl we link to it directly?</em></p>
+<p><em>There is a whole section in the manual (<a href="http://ohi-science.org/manual/#modifying-goal-models" class="uri">http://ohi-science.org/manual/#modifying-goal-models</a>), should we link to it directly?</em> TODO: I think the less we link to the manual the better, let’s talk about that more though.</p>
 <div id="save-data-layers-in-the-layers-folder" class="section level3">
 <h3>1.1 Save data layers in the <em>layers</em> folder</h3>
 <p>When you modify existing or create new data layers, we recommend saving this as a new <em>.csv</em> file with a suffix identifying your assessment (eg. <code>_regionYEAR.csv</code>). Modifying the layer name provides an easy way to track which data layers have been updated regionally, and which rely on global data. Then, the original layers (<code>_glYEAR.csv</code> and <code>_scYEAR.csv</code>) can be deleted.</p>
@@ -154,11 +156,8 @@ $(document).ready(function () {
 <div id="register-data-layers-in-layers.csv" class="section level3">
 <h3>1.2 Register data layers in <code>layers.csv</code></h3>
 <p>When there are new filenames associated with each layer, they will need to be registered in <code>regionYEAR/layers.csv</code>. If a layer simply has a new filename, only the <em>filename</em> column needs to be updated:</p>
-<div class="figure">
-<img src="https://docs.google.com/drawings/d/1adaERJXxzBxCxqBtmvp8uf5g68mHFfakR-Edbh2wwWo/pub?w=1677&amp;h=687" alt="Register new layers in layers.csv. Be sure to note if there is a change in the filename." />
-<p class="caption">Register new layers in <code>layers.csv</code>. Be sure to note if there is a change in the filename.</p>
-</div>
-<p>However, <strong>if a new layer has been added (for example when a new goal model is developed)</strong>, you will open <code>layers.csv</code> in a spreadsheet software (i.e. Microsoft Excel), add a new row in the registry for the new data layer and fill in the first eight columns (columns A-H):</p>
+<p><em>TODO: let’s take new screenshots from the toolbox-demo repo; the filenames aren’t so ugly anymore…</em> <img src="https://docs.google.com/drawings/d/1adaERJXxzBxCxqBtmvp8uf5g68mHFfakR-Edbh2wwWo/pub?w=1677&amp;h=687" alt="Register new layers in layers.csv. Be sure to note if there is a change in the filename." /></p>
+<p><em>TODO: I think this stuff should go in the Previous Chapter on Toolbox Architecture, and then we’ll link to it from here but focus on changing the columns rather than what they are…</em> However, <strong>if a new layer has been added (for example when a new goal model is developed)</strong>, you will open <code>layers.csv</code> in a spreadsheet software (i.e. Microsoft Excel), add a new row in the registry for the new data layer and fill in the first eight columns (columns A-H):</p>
 <ul>
 <li><strong>targets:</strong> Add the goal/dimension that the new data layer relates to. Goals are indicated with two-letter codes and sub-goals are indicated with three-letter codes, with pressures, resilience, and spatial layers indicated separately.</li>
 <li><strong>layer:</strong> Add an identifying name for the new data layer, which will be referenced in R scripts like <code>functions.R</code> and <em>.csv</em> files like <code>pressures_matrix.csv</code> and <code>resilience_matrix.csv</code>.</li>
@@ -174,7 +173,8 @@ $(document).ready(function () {
 </div>
 <div id="step-2-source-configure_toolbox.r" class="section level2">
 <h2>Step 2: source <code>configure_toolbox.r</code></h2>
-<p>This step syncs different components of the toolbox (eg. data layers, goal functions, etc) and makes sure that you data are ready to be called when you want to modify goal models and calculate scores. More specifically, sourcing <code>configure_toolbox.r</code> will:</p>
+<p>TODO: screenshot here?</p>
+<p>This step syncs different components of the Toolbox (eg. data layers, goal functions, etc) and makes sure that you data are ready to be called when you want to modify goal models and calculate scores. More specifically, sourcing <code>configure_toolbox.r</code> will:</p>
 <ol style="list-style-type: decimal">
 <li>load the necessary R packages</li>
 <li>load scenario configurations (eg. functions.r)</li>
@@ -209,8 +209,8 @@ ry &lt;- SelectLayersData(layers, layers = &#39;ao_need&#39;, narrow=TRUE) %&gt;
 <p>Tip: it’s always a good idea to check what your data looks like and make sure there are no glaring errors. A couple of commonly used functions are: head() and str()</p>
 </blockquote>
 </div>
-<div id="calcualte-status" class="section level3">
-<h3>3.2 Calcualte status</h3>
+<div id="calculate-status" class="section level3">
+<h3>3.2 Calculate status</h3>
 <p>Once you make sure your raw data have been loaded and joined in the right format, you can start calculate status scores!</p>
 <pre class="r"><code># model: this step calculates status scores of all years, using the goal model. 
 
@@ -281,7 +281,7 @@ ry &lt;- SelectLayersData(layers, layers = &#39;ao_need&#39;, narrow=TRUE) %&gt;
 </div>
 <div id="step-5.-calculate-overall-scores" class="section level2">
 <h2>Step 5. Calculate overall scores</h2>
-<p>Hooray you’ve modified a goal function! Now let’s calcalate the remaining score components (pressures, resilience, likely future state, and overall score). This is done in <code>calculate_scores.r</code></p>
+<p>Hooray you’ve modified a goal function! Now let’s calculate the remaining score components (pressures, resilience, likely future state, and overall score). This is done in <code>calculate_scores.r</code></p>
 <p><em>We’ll learn how to modify Pressures and Resilience matrix in a different chapter.</em></p>
 <pre class="r"><code># calculate scenario scores
 scores = CalculateAll(conf, layers, debug=F)
