@@ -121,10 +121,6 @@ $(document).ready(function () {
 
 
 <p><em>TODO JSL: some kind of overview like:</em> This chapter will take you from prepared data to calculated scores. It requires book keeping, <code>R</code> functions, and ultimately, the <code>R</code> package <code>ohicore</code>…</p>
-<p>Once you have prepared your data layer in the prep folder, you are ready to modify goal models and calculate scores using those layers in <code>functions.r</code>.</p>
-<blockquote>
-<p><code>functions.r</code> is pre-loaded with <code>R</code> code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done.</p>
-</blockquote>
 <p>In this section, we won’t be modifying goal models yet. Instead, to get you familiar with the construct of functions.R and the sequence of events that are involved in modifying goal models, we’ll plug in the data layer that you just prepped, saved, and registered (link to previous data prep section), follow these steps to calculate scores:</p>
 <ol style="list-style-type: decimal">
 <li><p>Save and register data layers</p></li>
@@ -141,60 +137,76 @@ $(document).ready(function () {
 <li><p>check and possibly update how the function is called <em>in <code>conf/goals.csv</code></em></p></li>
 <li><p>calculate the remaining component of OHI scores <em>in <code>calculate_scores.r</code></em></p></li>
 </ol>
-<p>Now let’s get started and give it a try!</p>
-<p>TODO: screenshot of file structure, or Ning’s google drawing of all the files. Like this one? We can highlight what files are needed in this tutorial, and relative position in the conduct process.</p>
+<p>We will go through each of the scripts mentioned above. Here is a general structure to show where those files are in relation to the entire calcualtion process:</p>
 <div class="figure">
-<img src="https://docs.google.com/drawings/d/1zHe1Gp2L7xN04w3NO_uQvOrl47Ug_oogyj2E338J90U/pub?w=960&amp;h=600" alt="all files" />
-<p class="caption">all files</p>
+<img src="https://docs.google.com/drawings/d/1zHe1Gp2L7xN04w3NO_uQvOrl47Ug_oogyj2E338J90U/pub?w=960&amp;h=600" />
+
 </div>
+<p>Now let’s get started and give it a try!</p>
 <div id="step-1-save-and-register-data-layers" class="section level2">
 <h2>Step 1: Save and register data layers</h2>
+<p>Before processed data can be used by the toolbox for calculations, they need to be saved and registered here:</p>
+<div class="figure">
+<img src="https://docs.google.com/drawings/d/1IwHf8pMBlpzOIYKL0hoEF5rETGA765Qtwkz7es7B3Rg/pub?h=500" />
+
+</div>
 <div id="save-data-layers-in-the-layers-folder" class="section level3">
 <h3>1.1 Save data layers in the <em>layers</em> folder</h3>
-<p>When you modify existing or create new data layers, we recommend saving this as a new <em>.csv</em> file with a suffix identifying your assessment (eg. <code>_sc2016.csv</code>). Modifying the layer name provides an easy way to track which data layers have been updated regionally, and which rely on global data. Then, the original layers (<code>_gl2016.csv</code> and <code>_gl2016placeholder.csv</code>) can be deleted.</p>
-<blockquote>
-<p>Tip: filenames should not have any spaces: use an underscore (’_’) instead. This will reduce problems when R reads the files.</p>
-</blockquote>
+<p>When modifying existing or creating new data layers in the prep folder, save the ready-to-use layers in this folder. We recommend saving it as a new <em>.csv</em> file with:</p>
+<ul>
+<li>a prefix identifying the goal (eg. <code>fis_</code>)</li>
+<li>a suffix identifying your assessment (eg. <code>_sc2016.csv</code>).</li>
+</ul>
+<p>Modifying the layer name provides an easy way to track which data layers have been updated regionally, and which rely on global data. Then, the original layers (<code>_gl2016.csv</code> and <code>_gl2016placeholder.csv</code>) can be deleted.</p>
+<p><em><strong>Tip</strong>: filenames should not have any spaces: use an underscore instead. This will reduce problems when R reads the files.</em></p>
 </div>
 <div id="register-data-layers-in-layers.csv" class="section level3">
 <h3>1.2 Register data layers in <code>layers.csv</code></h3>
-<p>When there are new filenames associated with each layer, they will need to be registered in <code>assessmentYEAR/layers.csv</code>. If a layer simply has a new filename, only the <em>filename</em> column needs to be updated:</p>
-<p><em>TODO: let’s take new screenshots from the toolbox-demo repo; the filenames aren’t so ugly anymore…</em> (DONE) <img src="https://docs.google.com/drawings/d/1juueRiA0gevOoHH_8owzLNanyQ-H1mAOEl7L_l5YSJ0/pub?w=960&amp;h=720" alt="Register new layers in layers.csv. Be sure to note if there is a change in the filename." /></p>
-<!-- *TODO: I think this stuff should go in the Previous Chapter on Toolbox Architecture, and then we'll link to it from here but focus on changing the columns rather than what they are...* -->
-<!-- However, **if a new layer has been added (for example when a new goal model is developed)**, you will open `layers.csv` in a spreadsheet software (i.e. Microsoft Excel), add a new row in the registry for the new data layer and fill in the first eight columns (columns A-H): -->
-<!--  + **targets:** Add the goal/dimension that the new data layer relates to. Goals are indicated with two-letter codes and sub-goals are indicated with three-letter codes, with pressures, resilience, and spatial layers indicated separately. -->
-<!--  + **layer:** Add an identifying name for the new data layer, which will be referenced in R scripts like `functions.R` and *.csv* files like `pressures_matrix.csv` and `resilience_matrix.csv`. -->
-<!--  + **name:** Add a longer title for the data layer. -->
-<!--  + **description:** Add a longer description of the new data layer. -->
-<!--  + **fld_value:** Add the appropriate units for the new data layer. It is _the same as the column name in the data file_, which will be referenced in R scripts in subsequent calculations. (example: area_km2) -->
-<!--  + **units:** Add a description about the *units* chosen in the *fld_value* column above. Think about what units you would like to be displayed online when filling out "units." (example: km^2) -->
-<!--  + **filename:** Add a filename for the new data layer that matches the name of the *.csv* file that was created previously in the `layers` folder. -->
-<!--  + **fld_id_num:** Area designation that applies to the newly created data layer, such as: *rgn_id* and *fao_id*. -->
-<!-- It is important to check that you have filled you the fields correctly, for instance, if "fld_value" does not match the header of the source data layer, you will see an error message when you try to calculate scores. Other columns are generated later by the Toolbox as it confirms data formatting and content. -->
+<p>After you saved the data layer and named it properly, now you can register it in <code>layers.csv</code>. This will tell the Toolbox where to look for data when you calculate scores.</p>
+<div class="figure">
+<img src="https://docs.google.com/drawings/d/1juueRiA0gevOoHH_8owzLNanyQ-H1mAOEl7L_l5YSJ0/pub?h=600" />
+
+</div>
+<p><em>If a layer simply has a new filename, only the <em>filename</em> column needs to be updated.</em></p>
 </div>
 </div>
 <div id="step-2-source-configure_toolbox.r" class="section level2">
-<h2>Step 2: source <code>configure_toolbox.r</code></h2>
-<p>TODO: screenshot here? Ning: here it is! but if people are following along with the demo repo, they should be looking at configure_toolbox.r now, right?</p>
+<h2>Step 2: Source <code>configure_toolbox.r</code></h2>
+<p>Now you have fully prepared and registered the data with the Toolbox, there is just one more step before calculations! Let’s “congifure” the Toolbox:</p>
 <div class="figure">
-<img src="https://docs.google.com/drawings/d/1BW6CEaCUoVCZQz7z9akP0P4rRMDLvvxgMq7cdYlyxCA/pub?w=960&amp;h=720" alt="configure_toolbox.r" />
-<p class="caption">configure_toolbox.r</p>
+<img src="https://docs.google.com/drawings/d/1CKNjIORLJOEaV2XW4Z9QuFLN7q1lJ1PaEGg2dSG1-_o/pub?h=450" />
+
 </div>
-<p>This step syncs different components of the Toolbox (eg. data layers, goal functions, etc) and makes sure that you data are ready to be called when you want to modify goal models and calculate scores. More specifically, sourcing <code>configure_toolbox.r</code> will:</p>
+<p>This script syncs different components of the Toolbox (eg. data layers, goal functions, etc) and makes sure that you data are ready to be called when you want to modify goal models and calculate scores.</p>
+<p>More specifically, sourcing <code>configure_toolbox.r</code> will:</p>
 <ol style="list-style-type: decimal">
 <li>load the necessary R packages</li>
 <li>load scenario configurations (eg. functions.r)</li>
 <li>check that data layers are properly formatted and registered</li>
 <li>load data layers so that you can call them in functions.r</li>
 </ol>
-<blockquote>
-<p>Note: repeat this step whenever you save a new data layer or change a goal function.</p>
-</blockquote>
+<p><em><strong>Note</strong>: repeat this step whenever you save a new data layer or change a goal function.</em></p>
+<p><em><strong>Tip</strong>: “Source” to run all the lines</em></p>
+<div class="figure">
+<img src="https://docs.google.com/drawings/d/1JvSJKyiwvp92--obTwHT3IYht1XE0823sORJ4FdnX74/pub?h=450" />
+
+</div>
 </div>
 <div id="step-3-update-goal-model" class="section level2">
 <h2>Step 3: Update goal model</h2>
+<p>Now you are ready to modify goal models in <code>functions.r</code>. It is contained in the <code>conf</code> folder.</p>
+<div class="figure">
+<img src="https://docs.google.com/drawings/d/1CKNjIORLJOEaV2XW4Z9QuFLN7q1lJ1PaEGg2dSG1-_o/pub?h=450" />
+
+</div>
+<p>It is pre-loaded with <code>R</code> code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done.</p>
 <p>Open <code>functions.r</code>, go to the appropriate goal function. We will use Artisanal Fishing Opportunity (AO) as an example.</p>
-<p><img src="https://docs.google.com/drawings/d/1Z2AVtVfIZEd_5GDcmaLb8mRpErKTDzmcbg0SBMxKsxs/pub?w=960&amp;h=720" alt="functions.R" /> &gt; Tip. (link to a google drawing image) Clicking the bottom left corner of Console will show you a drop-down menu of all functions. It’s a shortcut to jump to the appropriate section or goal model.</p>
+<p><em><strong>Tip</strong>: Clicking the bottom left corner of Console will show you a drop-down menu of all functions. It’s a shortcut to jump to the appropriate section or goal model.</em></p>
+<div class="figure">
+<img src="https://docs.google.com/drawings/d/1Z2AVtVfIZEd_5GDcmaLb8mRpErKTDzmcbg0SBMxKsxs/pub?h=450" />
+
+</div>
+<p><em>Each goal model is written as a function, and you will modify the goal model within the confines of each function.</em></p>
 <div id="load-data" class="section level3">
 <h3>3.1 Load data</h3>
 <p>Run this chunk of code and the data layers will be loaded, joined, and ready to be manipulated further:</p>
@@ -271,16 +283,14 @@ ry &lt;- SelectLayersData(layers, layers = &#39;ao_need&#39;, narrow=TRUE) %&gt;
 <h2>Step 4. Update goal call in <code>goals.csv</code>**</h2>
 <p><code>goals.csv</code> in the <code>conf</code> folder provides input information for <code>functions.r</code>, particularly about function calls. These are indicated by two columns: <em>preindex_function</em> (functions for all goals that do not have sub-goals, and functions for all sub-goals) and <em>postindex_function</em> (functions for goals with sub-goals).</p>
 <p>In the <code>preindex_fuction</code>, you could specify variables such as <em>status_year</em> and <em>trend_year</em>, which you can call in your goal function. Note that it is not necessary to specify those variables. If you do not use them in your function as in the CS example, you could delete those variables in <code>preindex_function</code>.</p>
-<blockquote>
-<p>Changing goal weights will be done here by editing the value in the <em>weight</em> column. Weights do not need to be 0-1 or add up to 10; weights will be scaled as a proportion of the number of goals assessed. The ten goals are weighted equally by default.</p>
-</blockquote>
+<p><em>Changing goal weights will be done here by editing the value in the <em>weight</em> column. Weights do not need to be 0-1 or add up to 10; weights will be scaled as a proportion of the number of goals assessed. The ten goals are weighted equally by default.</em></p>
 <div class="figure">
-<img src="https://docs.google.com/drawings/d/17BgYSw2sHbZvHNjUqBlTG-kCOAAn7o6a65O37s0S_es/pub?w=1052&amp;h=719" alt="Check the information in goals.csv. It provides input information for functions.R." />
-<p class="caption">Check the information in <code>goals.csv</code>. It provides input information for <code>functions.R</code>.</p>
+<img src="https://docs.google.com/drawings/d/17BgYSw2sHbZvHNjUqBlTG-kCOAAn7o6a65O37s0S_es/pub?h=500" />
+
 </div>
 <div class="figure">
-<img src="https://docs.google.com/drawings/d/1o2wtJ9KCPDyGPH9Y4unmALG6BlxX9lmJ_PakDDiQrLo/pub?w=700&amp;h=524" alt="A screenshot of goals.csv, used to modify goal model" />
-<p class="caption">A screenshot of <code>goals.csv</code>, used to modify goal model</p>
+<img src="https://docs.google.com/drawings/d/1o2wtJ9KCPDyGPH9Y4unmALG6BlxX9lmJ_PakDDiQrLo/pub?h=500" />
+
 </div>
 </div>
 <div id="step-5.-calculate-overall-scores" class="section level2">
@@ -294,9 +304,7 @@ scores = CalculateAll(conf, layers, debug=F)
 write.csv(scores, &#39;scores.csv&#39;, na=&#39;&#39;, row.names=F)</code></pre>
 <p>After the calculation is done, you should be able to see the compiled score sheet for all goals in all regions in sub-country/scores.csv.</p>
 <p>It is very likely that during the CalculateAll process you’ll encounter problems and see error messages. In most cases, the error messages can specify what the error is and in which step it occurs, which should be helpful for trouble shooting. Some commonly occurring errors and how to fix them can be found in the Troubleshooting section of the manual.</p>
-<blockquote>
-<p>Tip: whenever there are changes made (addition, deletion, changes in .csv or r script), you would be notified in the Git window. So here, since you added a new data layer and/more modified a function, and are expecting changes in score.csv, you should see it in Git. This is a good place to double check whether you have made the right changes.</p>
-</blockquote>
+<p><em><strong>Tip</strong>: whenever there are changes made (addition, deletion, changes in .csv or r script), you would be notified in the Git window. So here, since you added a new data layer and/more modified a function, and are expecting changes in score.csv, you should see it in Git. This is a good place to double check whether you have made the right changes.</em></p>
 </div>
 
 
