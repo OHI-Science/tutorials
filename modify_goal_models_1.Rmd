@@ -11,7 +11,7 @@ knitr::opts_chunk$set(eval = FALSE)
 ```
 
 
-*TODO @jules32: some kind of overview like:* This chapter will take you from prepared data to calculated scores. It requires book keeping, `R` functions, and ultimately, the `R` package `ohicore`...
+*TODO @jules32: some kind of overview like:* This chapter will take you from prepared data to calculated scores. It requires book keeping, `R` functions, and ultimately, the `R` package `ohicore`... @jules32: i'm not sure if we should emphasize ohicore here. it's good to quickly explain what it does later. but since people are not going to modify ohicore, and it's just running in the background essentially, mentioning it here could add unnecessary confusion... 
 
 - *In this example, we will substitute a single global data layer with local data and recalculate scores without modifying the goal model itself. The \@ref(update) chapter will show an example for updating goal models.* 
 - *screenshot of RStudio window, overview of `configure_toolbox.r` and `calculate_scores.r`, etc* 
@@ -24,96 +24,87 @@ Eg: In this chapter we're going to
     - single goal model with updated data, basically line-by-line to understand the architecture of goal models (access the correct data layers, calc status, calc trend, make sure the final output is standard for what the `scores variables` need. 
     - then calculate all goal models and scores, including pressures, and resilience. 
 
-- will probably need a section "what is ohicore and how does it operate with my ohi+ repo?"
+- will probably need a section "what is ohicore and how does it operate with my ohi+ repo?" (see bel)
 - introduce which data layer we modified and which goal model we are using as an example (eg AO)
     
+    
+@jules32: Ning's edits:
+
+_what is ohicore and how does it operate with my ohi+ repo?_
+
+_**ohicore** is a package developed by our team that contains all the essential functions and supporting packages you will use to calculate the final OHI scores. By installing ohicore and calling it from your ohi+ assessment repository, you gain access to all those funcitons and packages. ohicore comes into play when you calculate overall goal scores._ 
+
+_How to install?: (this should be in a separate tutorial... eg. preparte your toolbox?) To install, open and source the script install_ohicore.r in your scenario folder (ie. your regionYEAR folder). This only needs to be done once at the beginning of your assessment, and you do not need to rerun it again during an assessment._
+
 
 ---- 
 
 In this section, we won't be modifying goal models yet. Instead, we will get you familiar with the construct of `functions.R` and the sequence of events required to calculate scores. This means we'll take the data layer that you just prepared \@ref(prep) and follow these steps to calculate scores: 
 
-1. Confirm that data layers are saved and registered **TODO @ningningj: saving and registering should probably be in the \@ref(prep) chapter?** We could save it in a different .Rmd for now and have it be a subchapter of the prep chapter, referencing it here?: 
+1. Confirm that data layers are saved and registered. See \@ref(prep) 
 
 1. Load `ohicore` and check data layers _in `configure_toolbox.r`_
 
-1. Calculate goal scores _in `conf/functions.r`_ **TODO @ningningj: let's not say 'update' in this chapter, let's save that for the following chapter. Here we just want to calculate goal scores** 
+1. Calculate goal scores _in `conf/functions.r`_
   - load data (`functions.r`)
   - calculate status scores (`functions.r`)
   - calculate trend scores (`functions.r`)
   - combine status and trend scores (`functions.r`)
 
-4. check and possibly update how the function is called _in `conf/goals.csv`_
+3. check and possibly update how the function is called _in `conf/goals.csv`_
 
-5. calculate the remaining component of OHI scores _in `calculate_scores.r`_
+4. calculate the remaining component of OHI scores _in `calculate_scores.r`_
 
 We will go through each of the scripts mentioned above. Here is a general structure to show where those files are in relation to the entire calculation process: 
 
-**TODO @ningningj: this figure may be more clear here if the red boxes are removed and instead placed around the green top pieces "modify goal models" and "calculate scores"?**
-![](https://docs.google.com/drawings/d/1zHe1Gp2L7xN04w3NO_uQvOrl47Ug_oogyj2E338J90U/pub?w=960&h=600)
+**TODO @ningningj: this figure may be more clear here if the red boxes are removed and instead placed around the green top pieces "modify goal models" and "calculate scores"?** @jules32: i didn't do that because we are not updating pressures and resilience. but your point is totally valid. i updated the figure as below, highlighting only the steps and scripts used here. what do you think?
+![](https://docs.google.com/drawings/d/1MAIgSAFUTFg2J9XKIYBUFttOfHex5OSMbXIDlUMlKSY/pub?h=500)
 
 Now let's get started and give it a try! 
 
-## Step 1: Save and register data layers TODO @ningingj: let's move this into a separate prep Rmd
-
-Before processed data can be used by the Toolbox for calculations, they need to be saved and registered here: 
-
-![](https://docs.google.com/drawings/d/1IwHf8pMBlpzOIYKL0hoEF5rETGA765Qtwkz7es7B3Rg/pub?h=500)
-
-### 1.1 Save data layers in the *layers* folder
-
-When modifying existing or creating new data layers in the prep folder, save the ready-to-use layers in this folder. We recommend saving it as a new *.csv* file with: 
-
-- a prefix identifying the goal (eg. `fis_`)
-- a suffix identifying your assessment (eg. `_sc2016.csv`). 
-
-Modifying the layer name provides an easy way to track which data layers have been updated regionally, and which rely on global data. Then, the original layers (`_gl2016.csv` and `_gl2016placeholder.csv`) can be deleted.  
-
-_**Tip**: filenames should not have any spaces: use an underscore instead. This will reduce problems when R reads the files._
-
-### 1.2 Register data layers in `layers.csv`  
-
-After you saved the data layer and named it properly, now you can register it in `layers.csv`. This will tell the Toolbox where to look for data when you calculate scores.  
-
-![](https://docs.google.com/drawings/d/1juueRiA0gevOoHH_8owzLNanyQ-H1mAOEl7L_l5YSJ0/pub?h=600)  
-
-_If a layer simply has a new filename, only the *filename* column needs to be updated._
-
 
 ## Source `configure_toolbox.r`
-**note @ningningj: bookdown will take care of numbering so we can remove the 'Steps' I think 
 
 Now you have fully prepared and registered the data with the Toolbox, there is just one more step before calculations! We have to make sure everything is properly configured for the Toolbox: 
 
-**TODO @ningningj, highlight `configure_toolbox.r` in this figure instead of functions.r**
-
-![](https://docs.google.com/drawings/d/1CKNjIORLJOEaV2XW4Z9QuFLN7q1lJ1PaEGg2dSG1-_o/pub?h=450)
+![](https://docs.google.com/drawings/d/1WvHfWe06D2x9cKB7vhWrmvmxuRpmGvzsMs9AjS23g3E/pub?h=450)
 
 This script combines everything required to calculate OHI scores and checks that they are properly formatted, and will minimize potential errors down the line. It makes sure that your data and goal models are ready to be used to calculate scores. 
-**TODO @ningningj/@jules32: add section/language about how to interpret errors: errors are identifying YOUR problems, not ohicore's (said in a nicer way)**
+**TODO @ningningj/@jules32: add section/language about how to interpret errors: errors are identifying YOUR problems, not ohicore's (said in a nicer way)** @jules32: see below under step 3. 
+
+Ning's edits: 
+
 
 More specifically, sourcing `configure_toolbox.r` will: 
 
 1. load the necessary `R` packages, including `ohicore`
-2. load scenario configurations (eg. functions.r) TODO @ningningj: I think we need to write out what `ohicore::Conf('conf')` etc are doing, this is too vague
+
+
+2. load scenario configurations. TODO @ningningj: I think we need to write out what `ohicore::Conf('conf')` etc are doing, this is too vague; 
+Ning's edits:  This step links together all the data layers (for goal, pressures, resilience), goal functions, and other OHI parameters that determines how ohi scores are calculated @jules32: I also added this language to configure_toolbox.R directly. since people will follow along in that script. 
+
 3. check that data layers are properly formatted and registered 
+
+Ning's edits: This is a gate-keeping step by ohicore to make sure the data layers you've entered are in the right format and can be read by ohicore properly. You'll likely encounter error messages. These messages intend to alert you that there are errors in data entry. Some common errors are: 
+- registration error. data layer name doesn't match what's been registered under "file name" in layers.R
+- missing comuns (eg. region id)
+...? 
+
 4. load data layers so that you can call them in functions.r 
 
-_**Note**: repeat this step whenever you save a new data layer or change a goal function._ **TODO @ningningj: this is a really important point, should not be a note but a statement, and probably in the bigger overview above
+_**Note**: repeat this step whenever you save a new data layer or change a goal function._ **TODO @ningningj: this is a really important point, should not be a note but a statement, and probably in the bigger overview above; 
+
 
 _**Tip**: "Source" to run all the lines_
 
 ![](https://docs.google.com/drawings/d/1JvSJKyiwvp92--obTwHT3IYht1XE0823sORJ4FdnX74/pub?h=450)
 
+
 ## Explore goal model
-**TODO @ningningj: let's not call this update, that's for the next chapter. This is just making sure the appropriate data layer is called. 
 
 Now you are ready to examine the goal model in `functions.r` and confirm that your data layer is appropriately called. `functions.r` is in the `conf` folder. TODO @ningningj/@jules32: more here
 
 ![](https://docs.google.com/drawings/d/1CKNjIORLJOEaV2XW4Z9QuFLN7q1lJ1PaEGg2dSG1-_o/pub?h=450)
-
-TODO @ningningj/@jules32: develop paragraphs from these bullets: 
-- `functions.r` has goal models (status and trend) for each goal in the assessment. Each goal model is a separte R function. Quick overview of how an R function is structured
-- `R` code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done. 
 
 Open `functions.r`, go to the appropriate goal function. We will use Artisanal Fishing Opportunity (AO) as an example. 
 
@@ -121,15 +112,22 @@ _**Tip**: Clicking the bottom left corner of Console will show you a drop-down m
 
 ![](https://docs.google.com/drawings/d/1Z2AVtVfIZEd_5GDcmaLb8mRpErKTDzmcbg0SBMxKsxs/pub?h=450)
 
-*Note @ningningj: this figure is too small to see, less white space would help*
+**TODO @ningningj: see note above but this needs to be more prominent**
 
-_Each goal model is written as a function, and you will modify the goal model within the confines of each function._ **TODO @ningningj: see note above but this needs to be more prominent**
+TODO @ningningj/@jules32: develop paragraphs from these bullets: 
+
+Ning's edits:
+
+`functions.r` has goal models for each goal in the assessment. **Each goal model is an individual R function that calculates status and trend, and you will modify the goal model within the confines of each function**. Each function contains these steps: load data layers, calculate status, calculate trend, combine status and trend. Destails of each step is further explained below. 
+
+_`functions.r` in your Full Repo are populated with `R` code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done. Now we'll use Artisanal Fishing Opportunity goal as an example._
 
 ### SelectLayersData
 
 Run this chunk of code and the data layers will be loaded, joined, and ready to be manipulated further: 
 
-**TODO @ningningj/@jules32: SelectLayersData is from ohicore, what it's doing...**
+**TODO @ningningj/@jules32: SelectLayersData is from ohicore, what it's doing...** 
+@jules32: See inline comments. I updated them in functions.r in demo repo too. might be easier to follow there. 
 
 ```{r load data}
 
@@ -229,7 +227,14 @@ _Changing goal weights will be done here by editing the value in the *weight* co
 ## Step 5. Calculate overall scores 
 **TODO @ningningj/@jules32: I think we'll want to make this a distinct thing that also includes pressures/resilience, etc, whereas they've just been walking through the status/trend for a single goal model above. Does that make sense? We can think of the organization...**
 
-Hooray you've modified a goal function! Now let's calculate the remaining score components (pressures, resilience, likely future state, and overall score). This is done in `calculate_scores.r`
+@jules32: umm did you mean that it's confusing to mention pressures/resilience here too, since we only walked through status/trend? i agree. what if we say it like this: 
+
+Hooray! You just walked through the status and trend calcuation for a single goal model. Let's take a look at how adding new data layers has changed the goal score. This is done in `calculate_scores.r`
+
+![](https://docs.google.com/drawings/d/1uMcbzmBRgjxKVgRqLYnxpbOGIJrm1AbMw7D3E-dUFzk/pub?w=960&h=720)
+
+OLD TEXT:
+Hooray you've modified a goal function! Now let's calculate the remaining score components (pressures, resilience, likely future state, and overall score). 
 
 _We'll learn how to modify Pressures and Resilience matrix in a different chapter._ 
 

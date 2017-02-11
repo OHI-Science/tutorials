@@ -145,58 +145,36 @@ $(document).ready(function () {
 <li>calculate trend scores (<code>functions.r</code>)</li>
 <li>combine status and trend scores (<code>functions.r</code>)</li>
 </ul>
-<ol start="4" style="list-style-type: decimal">
+<ol start="3" style="list-style-type: decimal">
 <li><p>check and possibly update how the function is called <em>in <code>conf/goals.csv</code></em></p></li>
 <li><p>calculate the remaining component of OHI scores <em>in <code>calculate_scores.r</code></em></p></li>
 </ol>
 <p>We will go through each of the scripts mentioned above. Here is a general structure to show where those files are in relation to the entire calculation process:</p>
-<p><strong>TODO <span class="citation">@ningningj</span>: this figure may be more clear here if the red boxes are removed and instead placed around the green top pieces “modify goal models” and “calculate scores”?</strong> <img src="https://docs.google.com/drawings/d/1zHe1Gp2L7xN04w3NO_uQvOrl47Ug_oogyj2E338J90U/pub?w=960&amp;h=600" /></p>
+<p><strong>TODO <span class="citation">@ningningj</span>: this figure may be more clear here if the red boxes are removed and instead placed around the green top pieces “modify goal models” and “calculate scores”?</strong> <span class="citation">@jules32</span>: i didn’t do that because we are not updating pressures and resilience. but your point is totally valid. i updated the figure as below, highlighting only the steps and scripts used here. what do you think? <img src="https://docs.google.com/drawings/d/1MAIgSAFUTFg2J9XKIYBUFttOfHex5OSMbXIDlUMlKSY/pub?h=500" /></p>
 <p>Now let’s get started and give it a try!</p>
-<div id="step-1-save-and-register-data-layers-todo-ningingj-lets-move-this-into-a-separate-prep-rmd" class="section level2">
-<h2>Step 1: Save and register data layers TODO <span class="citation">@ningingj</span>: let’s move this into a separate prep Rmd</h2>
-<p>Before processed data can be used by the Toolbox for calculations, they need to be saved and registered here:</p>
-<div class="figure">
-<img src="https://docs.google.com/drawings/d/1IwHf8pMBlpzOIYKL0hoEF5rETGA765Qtwkz7es7B3Rg/pub?h=500" />
-
-</div>
-<div id="save-data-layers-in-the-layers-folder" class="section level3">
-<h3>1.1 Save data layers in the <em>layers</em> folder</h3>
-<p>When modifying existing or creating new data layers in the prep folder, save the ready-to-use layers in this folder. We recommend saving it as a new <em>.csv</em> file with:</p>
-<ul>
-<li>a prefix identifying the goal (eg. <code>fis_</code>)</li>
-<li>a suffix identifying your assessment (eg. <code>_sc2016.csv</code>).</li>
-</ul>
-<p>Modifying the layer name provides an easy way to track which data layers have been updated regionally, and which rely on global data. Then, the original layers (<code>_gl2016.csv</code> and <code>_gl2016placeholder.csv</code>) can be deleted.</p>
-<p><em><strong>Tip</strong>: filenames should not have any spaces: use an underscore instead. This will reduce problems when R reads the files.</em></p>
-</div>
-<div id="register-data-layers-in-layers.csv" class="section level3">
-<h3>1.2 Register data layers in <code>layers.csv</code></h3>
-<p>After you saved the data layer and named it properly, now you can register it in <code>layers.csv</code>. This will tell the Toolbox where to look for data when you calculate scores.</p>
-<div class="figure">
-<img src="https://docs.google.com/drawings/d/1juueRiA0gevOoHH_8owzLNanyQ-H1mAOEl7L_l5YSJ0/pub?h=600" />
-
-</div>
-<p><em>If a layer simply has a new filename, only the <em>filename</em> column needs to be updated.</em></p>
-</div>
-</div>
 <div id="source-configure_toolbox.r" class="section level2">
 <h2>Source <code>configure_toolbox.r</code></h2>
-<p>**note <span class="citation">@ningningj</span>: bookdown will take care of numbering so we can remove the ‘Steps’ I think</p>
 <p>Now you have fully prepared and registered the data with the Toolbox, there is just one more step before calculations! We have to make sure everything is properly configured for the Toolbox:</p>
-<p><strong>TODO <span class="citation">@ningningj</span>, highlight <code>configure_toolbox.r</code> in this figure instead of functions.r</strong></p>
 <div class="figure">
-<img src="https://docs.google.com/drawings/d/1CKNjIORLJOEaV2XW4Z9QuFLN7q1lJ1PaEGg2dSG1-_o/pub?h=450" />
+<img src="https://docs.google.com/drawings/d/1WvHfWe06D2x9cKB7vhWrmvmxuRpmGvzsMs9AjS23g3E/pub?h=450" />
 
 </div>
-<p>This script combines everything required to calculate OHI scores and checks that they are properly formatted, and will minimize potential errors down the line. It makes sure that your data and goal models are ready to be used to calculate scores. <strong>TODO <span class="citation">@ningningj</span>/<span class="citation">@jules32</span>: add section/language about how to interpret errors: errors are identifying YOUR problems, not ohicore’s (said in a nicer way)</strong></p>
+<p>This script combines everything required to calculate OHI scores and checks that they are properly formatted, and will minimize potential errors down the line. It makes sure that your data and goal models are ready to be used to calculate scores. <strong>TODO <span class="citation">@ningningj</span><a href="mailto:/@jules32">/@jules32</a>: add section/language about how to interpret errors: errors are identifying YOUR problems, not ohicore’s (said in a nicer way)</strong> <span class="citation">@jules32</span>: see below under step 3.</p>
+<p>Ning’s edits:</p>
 <p>More specifically, sourcing <code>configure_toolbox.r</code> will:</p>
 <ol style="list-style-type: decimal">
 <li>load the necessary <code>R</code> packages, including <code>ohicore</code></li>
-<li>load scenario configurations (eg. functions.r) TODO <span class="citation">@ningningj</span>: I think we need to write out what <code>ohicore::Conf('conf')</code> etc are doing, this is too vague</li>
-<li>check that data layers are properly formatted and registered</li>
+</ol>
+<p><span class="citation">@jules32</span>: Ning’s edits: <em><strong>ohicore</strong> is a package developed by our team that contains all the essential functions you will use to calculate the final OHI scores, and you can call the functions contained in ohicore from your Full Repo. To install, find the script install_ohicore.r in your scenario folder (ie. your regionYEAR folder). Source the script, and now your Toolbox is all set up and ready to go! This only needs to be done once at the beginning of your assessment, and you do not need to rerun it again during an assessment. -&gt; we can move this to toolbox setup tutorial later… and reference it here.</em></p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>load scenario configurations. TODO <span class="citation">@ningningj</span>: I think we need to write out what <code>ohicore::Conf('conf')</code> etc are doing, this is too vague; Ning’s edits: This step links together all the data layers (for goal, pressures, resilience), goal functions, and other OHI parameters that determines how ohi scores are calculated <span class="citation">@jules32</span>: I also added this language to configure_toolbox.R directly. since people will follow along in that script.</p></li>
+<li><p>check that data layers are properly formatted and registered</p></li>
+</ol>
+<p>Ning’s edits: This is a gate-keeping step by ohicore to make sure the data layers you’ve entered are in the right format and can be read by ohicore properly. You’ll likely encounter error messages. These messages intend to alert you that there are errors in data entry. Some common errors are: - registration error. data layer name doesn’t match what’s been registered under “file name” in layers.R - missing comuns (eg. region id) …?</p>
+<ol start="4" style="list-style-type: decimal">
 <li>load data layers so that you can call them in functions.r</li>
 </ol>
-<p><em><strong>Note</strong>: repeat this step whenever you save a new data layer or change a goal function.</em> **TODO <span class="citation">@ningningj</span>: this is a really important point, should not be a note but a statement, and probably in the bigger overview above</p>
+<p><em><strong>Note</strong>: repeat this step whenever you save a new data layer or change a goal function.</em> **TODO <span class="citation">@ningningj</span>: this is a really important point, should not be a note but a statement, and probably in the bigger overview above;</p>
 <p><em><strong>Tip</strong>: “Source” to run all the lines</em></p>
 <div class="figure">
 <img src="https://docs.google.com/drawings/d/1JvSJKyiwvp92--obTwHT3IYht1XE0823sORJ4FdnX74/pub?h=450" />
@@ -205,25 +183,26 @@ $(document).ready(function () {
 </div>
 <div id="explore-goal-model" class="section level2">
 <h2>Explore goal model</h2>
-<p>**TODO <span class="citation">@ningningj</span>: let’s not call this update, that’s for the next chapter. This is just making sure the appropriate data layer is called.</p>
-<p>Now you are ready to examine the goal model in <code>functions.r</code> and confirm that your data layer is appropriately called. <code>functions.r</code> is in the <code>conf</code> folder. TODO <span class="citation">@ningningj</span>/<span class="citation">@jules32</span>: more here</p>
+<p>Now you are ready to examine the goal model in <code>functions.r</code> and confirm that your data layer is appropriately called. <code>functions.r</code> is in the <code>conf</code> folder. TODO <span class="citation">@ningningj</span><a href="mailto:/@jules32">/@jules32</a>: more here</p>
 <div class="figure">
 <img src="https://docs.google.com/drawings/d/1CKNjIORLJOEaV2XW4Z9QuFLN7q1lJ1PaEGg2dSG1-_o/pub?h=450" />
 
 </div>
-<p>TODO <span class="citation">@ningningj</span>/<span class="citation">@jules32</span>: develop paragraphs from these bullets: - <code>functions.r</code> has goal models (status and trend) for each goal in the assessment. Each goal model is a separte R function. Quick overview of how an R function is structured - <code>R</code> code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done.</p>
 <p>Open <code>functions.r</code>, go to the appropriate goal function. We will use Artisanal Fishing Opportunity (AO) as an example.</p>
 <p><em><strong>Tip</strong>: Clicking the bottom left corner of Console will show you a drop-down menu of all functions. It’s a shortcut to jump to the appropriate section or goal model.</em></p>
 <div class="figure">
 <img src="https://docs.google.com/drawings/d/1Z2AVtVfIZEd_5GDcmaLb8mRpErKTDzmcbg0SBMxKsxs/pub?h=450" />
 
 </div>
-<p><em>Note <span class="citation">@ningningj</span>: this figure is too small to see, less white space would help</em></p>
-<p><em>Each goal model is written as a function, and you will modify the goal model within the confines of each function.</em> <strong>TODO <span class="citation">@ningningj</span>: see note above but this needs to be more prominent</strong></p>
+<p><strong>TODO <span class="citation">@ningningj</span>: see note above but this needs to be more prominent</strong></p>
+<p>TODO <span class="citation">@ningningj</span><a href="mailto:/@jules32">/@jules32</a>: develop paragraphs from these bullets:</p>
+<p>Ning’s edits:</p>
+<p><code>functions.r</code> has goal models for each goal in the assessment. <strong>Each goal model is an individual R function that calculates status and trend, and you will modify the goal model within the confines of each function</strong>. Each function contains these steps: load data layers, calculate status, calculate trend, combine status and trend. Destails of each step is further explained below.</p>
+<p><em><code>functions.r</code> in your Full Repo are populated with <code>R</code> code from the most recent OHI global assessment as a starting place. You can run through the reference script line-by-line to learn how it has been done. Now we’ll use Artisanal Fishing Opportunity goal as an example.</em></p>
 <div id="selectlayersdata" class="section level3">
 <h3>SelectLayersData</h3>
 <p>Run this chunk of code and the data layers will be loaded, joined, and ready to be manipulated further:</p>
-<p><strong>TODO <span class="citation">@ningningj</span>/<span class="citation">@jules32</span>: SelectLayersData is from ohicore, what it’s doing…</strong></p>
+<p><strong>TODO <span class="citation">@ningningj</span><a href="mailto:/@jules32">/@jules32</a>: SelectLayersData is from ohicore, what it’s doing…</strong> <span class="citation">@jules32</span>: See inline comments. I updated them in functions.r in demo repo too. might be easier to follow there.</p>
 <pre class="r"><code>## &quot;SelectLayersData&quot; is an ohicore funtion to call the appropriate data layer by its layer name registered in`layers.csv` (eg. &quot;ao_access&quot;)
 
 ## &quot;select&quot;&quot; is a function from the dplyr package to let you select only the columns you would need
@@ -242,7 +221,7 @@ ry &lt;- SelectLayersData(layers, layers = &#39;ao_need&#39;, narrow=TRUE) %&gt;
 <div id="calculate-status" class="section level3">
 <h3>3.2 Calculate status</h3>
 <p>Once you make sure your raw data have been loaded and joined in the right format, you can start calculate status scores!</p>
-<p><strong>TODO <span class="citation">@ningningj</span>/<span class="citation">@jules32</span>: this syntax uses the <code>tidyverse</code> and chaining…look xxx to learn more</strong></p>
+<p><strong>TODO <span class="citation">@ningningj</span><a href="mailto:/@jules32">/@jules32</a>: this syntax uses the <code>tidyverse</code> and chaining…look xxx to learn more</strong></p>
 <pre class="r"><code># model: this step calculates status scores of all years, using the goal model. 
 
 ## &quot;mutate&quot; is another commonly used function from dplyr that allows you to add a new column to the data frame
@@ -310,8 +289,14 @@ ry &lt;- SelectLayersData(layers, layers = &#39;ao_need&#39;, narrow=TRUE) %&gt;
 </div>
 <div id="step-5.-calculate-overall-scores" class="section level2">
 <h2>Step 5. Calculate overall scores</h2>
-<p><strong>TODO <span class="citation">@ningningj</span>/<span class="citation">@jules32</span>: I think we’ll want to make this a distinct thing that also includes pressures/resilience, etc, whereas they’ve just been walking through the status/trend for a single goal model above. Does that make sense? We can think of the organization…</strong></p>
-<p>Hooray you’ve modified a goal function! Now let’s calculate the remaining score components (pressures, resilience, likely future state, and overall score). This is done in <code>calculate_scores.r</code></p>
+<p><strong>TODO <span class="citation">@ningningj</span><a href="mailto:/@jules32">/@jules32</a>: I think we’ll want to make this a distinct thing that also includes pressures/resilience, etc, whereas they’ve just been walking through the status/trend for a single goal model above. Does that make sense? We can think of the organization…</strong></p>
+<p><span class="citation">@jules32</span>: umm did you mean that it’s confusing to mention pressures/resilience here too, since we only walked through status/trend? i agree. what if we say it like this:</p>
+<p>Hooray! You just walked through the status and trend calcuation for a single goal model. Let’s take a look at how adding new data layers has changed the goal score. This is done in <code>calculate_scores.r</code></p>
+<div class="figure">
+<img src="https://docs.google.com/drawings/d/1uMcbzmBRgjxKVgRqLYnxpbOGIJrm1AbMw7D3E-dUFzk/pub?w=960&amp;h=720" />
+
+</div>
+<p>OLD TEXT: Hooray you’ve modified a goal function! Now let’s calculate the remaining score components (pressures, resilience, likely future state, and overall score).</p>
 <p><em>We’ll learn how to modify Pressures and Resilience matrix in a different chapter.</em></p>
 <pre class="r"><code># calculate scenario scores
 scores = CalculateAll(conf, layers, debug=F)
